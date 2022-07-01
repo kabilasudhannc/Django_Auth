@@ -14,9 +14,32 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+
+schema_view = get_schema_view(
+    openapi.Info(
+        title="Authentication API",
+        default_version='v1',
+        description="Basic Authentication API",
+        terms_of_service="https://www.cycatz.com",
+        contact=openapi.Contact(email="kabilanncc@gmail.com"),
+        license=openapi.License(name="Awesome IP"),
+    ),
+    public=True,
+    permission_classes=(permissions.AllowAny,),
+)
 
 urlpatterns = [
+    re_path(r'^doc(?P<format>\.json|\.yaml)$',
+            schema_view.without_ui(cache_timeout=0), name='schema-json'),  #<-- Here
+    path('doc/', schema_view.with_ui('swagger', cache_timeout=0),
+         name='schema-swagger-ui'),  #<-- Here
+    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0),
+         name='schema-redoc'),
+
     path('admin/', admin.site.urls),
     path('api/', include('authentication.urls'), name='authentication'),
     path('user/', include('dashboard.urls'), name='dashboard')
