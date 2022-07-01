@@ -27,3 +27,16 @@ class UserSerializer(serializers.ModelSerializer):
 
         instance.save()
         return instance
+
+class RegisterSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = MyUser
+        fields = ['email', 'password']
+
+class LogoutSerializer(serializers.Serializer):
+    access = serializers.CharField()
+    token = serializers.CharField()
+    class Meta:
+        # model = MyUser
+        fields = ['access', 'refresh']
